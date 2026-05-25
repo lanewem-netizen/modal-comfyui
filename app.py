@@ -4,10 +4,10 @@ app = modal.App("comfyui")
 
 image = (
     modal.Image.debian_slim()
-    .apt_install("git", "wget")
-    .pip_install("comfy-cli")
+    .apt_install("git", "python3", "python3-pip")
     .run_commands(
-        "comfy --skip-prompt --nvidia install"
+        "git clone https://github.com/comfyanonymous/ComfyUI.git /root/ComfyUI",
+        "cd /root/ComfyUI && pip install -r requirements.txt"
     )
 )
 
@@ -21,7 +21,6 @@ def ui():
     import subprocess
 
     subprocess.Popen(
-        "comfy launch -- --listen 0.0.0.0 --port 8188",
+        "cd /root/ComfyUI && python main.py --listen 0.0.0.0 --port 8188",
         shell=True,
-        
     )
