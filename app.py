@@ -3,32 +3,31 @@ import modal
 app = modal.App("comfyui")
 
 image = (
-    modal.Image.debian_slim()
-    .apt_install("git")
-    .pip_install("torch", "torchvision", "torchaudio")
+    modal.Image.debian_slim(python_version="3.11")
+    .apt_install("git", "ffmpeg", "libgl1")
+    .pip_install(
+        "torch",
+        "torchvision",
+        "torchaudio",
+    )
     .run_commands(
-        "git clone https://github.com/comfyanonymous/ComfyUI.git /root/ComfyUI",
+        "git clone https://github.com/comfyanonymous/ComfyUI /root/ComfyUI",
         "cd /root/ComfyUI && pip install -r requirements.txt"
     )
 )
 
 @app.function(
-    gpu="L4",
     image=image,
-    scaledown_window=300,
-    timeout=3600,
+    gpu="T4",
+    timeout=60 * 60,
+    container_idle_timeout=300,
 )
-@modal.web_server(8188, startup_timeout=600)
+
+@modal.web_server(8188, startup_timeout=60 * 10)
 def ui():
     import subprocess
 
-    subprocess.run(
-        [
-            "python",
-            "/root/ComfyUI/main.py",
-            "--listen",
-            "0.0.0.0",
-            "--port",
-            "8188",
-        ]
+    subprocess.Popen(
+        "python /root/ComfyUI/main.py --listen 0.0.0.0 --port 8188",
+        shell=True,
     )
