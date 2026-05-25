@@ -7,7 +7,7 @@ image = (
     .apt_install("git", "wget")
     .pip_install("comfy-cli")
     .run_commands(
-        "comfy --skip-prompt install"
+        "comfy --skip-prompt --nvidia install"
     )
 )
 
