@@ -23,4 +23,5 @@ def ui():
     subprocess.Popen(
         "comfy launch -- --listen 0.0.0.0 --port 8188",
         shell=True,
+        
     )
