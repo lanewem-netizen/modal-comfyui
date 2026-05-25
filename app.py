@@ -1,5 +1,5 @@
 import modal
-import subprocess
+import os
 
 app = modal.App("comfyui")
 
@@ -27,13 +27,21 @@ image = (
     timeout=60 * 60,
     scaledown_window=300,
 )
-
 @modal.web_server(
     8188,
-    startup_timeout=60 * 10
+    startup_timeout=60 * 10,
 )
 def ui():
-    subprocess.Popen(
-        "python /root/ComfyUI/main.py --listen 0.0.0.0 --port 8188",
-        shell=True,
+    os.chdir("/root/ComfyUI")
+
+    os.execvp(
+        "python",
+        [
+            "python",
+            "main.py",
+            "--listen",
+            "0.0.0.0",
+            "--port",
+            "8188",
+        ],
     )
