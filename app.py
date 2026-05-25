@@ -4,7 +4,8 @@ app = modal.App("comfyui")
 
 image = (
     modal.Image.debian_slim()
-    .apt_install("git", "python3", "python3-pip")
+    .apt_install("git")
+    .pip_install("torch", "torchvision", "torchaudio")
     .run_commands(
         "git clone https://github.com/comfyanonymous/ComfyUI.git /root/ComfyUI",
         "cd /root/ComfyUI && pip install -r requirements.txt"
@@ -14,14 +15,20 @@ image = (
 @app.function(
     gpu="L4",
     image=image,
+    scaledown_window=300,
     timeout=3600,
 )
-@modal.web_server(8188)
+@modal.web_server(8188, startup_timeout=600)
 def ui():
-    import os
+    import subprocess
 
-    os.chdir("/root/ComfyUI")
-
-    os.system(
-        "python main.py --listen 0.0.0.0 --port 8188"
+    subprocess.run(
+        [
+            "python",
+            "/root/ComfyUI/main.py",
+            "--listen",
+            "0.0.0.0",
+            "--port",
+            "8188",
+        ]
     )
