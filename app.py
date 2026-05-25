@@ -18,9 +18,10 @@ image = (
 )
 @modal.web_server(8188)
 def ui():
-    import subprocess
+    import os
 
-    subprocess.Popen(
-        "cd /root/ComfyUI && python main.py --listen 0.0.0.0 --port 8188",
-        shell=True,
+    os.chdir("/root/ComfyUI")
+
+    os.system(
+        "python main.py --listen 0.0.0.0 --port 8188"
     )
